@@ -160,7 +160,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DataContratcAttribute.cs" />
     <Compile Include="Models\DirecionadoresFile.cs" />
+    <Compile Include="Models\Filters.cs" />
+    <Compile Include="Models\Placemark.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

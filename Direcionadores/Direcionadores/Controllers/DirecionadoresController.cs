@@ -1,9 +1,13 @@
-﻿using System;
+﻿using Direcionadores.Models;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Web;
 using System.Web.Http;
+using System.Web.Http.Description;
 
 namespace Direcionadores.Controllers
 {
@@ -11,75 +15,121 @@ namespace Direcionadores.Controllers
     public class DirecionadoresController : ApiController
     {
 
+        #region Endpoints
+
         [Route("export")]
-        [HttpGet]
-        public List<string> export()
+        [HttpPost]
+        [ResponseType(typeof(List<string>))]
+        public IHttpActionResult Export(
+                [FromUri] string cliente,
+                [FromUri] string situacao,
+                [FromUri] string bairro,
+                [FromUri] string referencia,
+                [FromUri] string ruaCruzamento
+            )
         {
             try
             {
-                return new List<string>() { "String 0", "String 1", "String 2", "String 3", "String 4" };
+                this.ValidateFilters("EXPORT", cliente, situacao, bairro, referencia, ruaCruzamento);
+
+                DirecionadoresFile direcionadoresFile = new DirecionadoresFile();
+            }
+            catch (HttpException ex)
+            {
+                return BadRequest();
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+
+            return Ok(new List<string>() { "String 0" });
         }
+
 
         [Route("")]
         [HttpGet]
-        public List<string> list()
+        public IHttpActionResult List(
+                //[FromUri] string cliente,
+                //[FromUri] string situacao,
+                //[FromUri] string bairro,
+                //[FromUri] string referencia,
+                //[FromUri] string ruaCruzamento
+            )
         {
             try
             {
-                return new List<string>() { "String 0", "String 3", "String 4" };
+                //this.ValidateFilters("LIST", cliente, situacao, bairro, referencia, ruaCruzamento);
+
+                DirecionadoresFile direcionadoresFile = new DirecionadoresFile();
             }
             catch (Exception ex)
             {
-                throw ex;
+                return BadRequest(ex.Message);
             }
+
+            return Ok(new List<string>() { "String 0", "String 3", "String 4" });
         }
+
 
         [Route("filters")]
         [HttpGet]
-        public List<string> filters()
+        public IHttpActionResult Filters()
         {
             try
             {
-                return new List<string>() { "String 0", "String 1", "String 2" };
+                DirecionadoresFile direcionadoresFile = new DirecionadoresFile();
             }
             catch (Exception ex)
             {
                 throw ex;
             }
+
+            return Ok(new List<string>() { "String 0", "String 1", "String 2" });
         }
 
 
 
-        //// GET: api/Direcionadores
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
+        [Route("upload")]
+        [HttpPost]
+        public IHttpActionResult Import(HttpPostedFile kmlFile)
+        {
+            try
+            {
+                DirecionadoresFile direcionadoresFile = new DirecionadoresFile();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
 
-        //// GET: api/Direcionadores/5
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
+            return Ok();
+        }
 
-        //// POST: api/Direcionadores
-        //public void Post([FromBody]string value)
-        //{
-        //}
+        #endregion Endpoints
 
-        //// PUT: api/Direcionadores/5
-        //public void Put(int id, [FromBody]string value)
-        //{
-        //}
 
-        //// DELETE: api/Direcionadores/5
-        //public void Delete(int id)
-        //{
-        //}
+        #region Private Methods
+
+        private void ValidateFilters(string metodo, string cliente, string situacao, string bairro, string referencia, string ruaCruzamento)
+        {
+            switch (metodo)
+            {
+                case "EXPORT":
+
+                    break;
+
+                case "LIST":
+
+                    break;
+
+                case "FILTERS":
+
+                    break;
+            }
+        }
+
+        #endregion Private Methods
+
     }
 }
