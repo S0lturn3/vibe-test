@@ -1,25 +1,28 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Direcionadores.Models
-{
+{   
     [DataContract]
-    public class Filters
+    public class AvailableFilters
     {
 
         [DataMember]
-        public string CLIENTE { get; set; }
+        public List<string> CLIENTES { get; set; }
         
         [DataMember]
-        public string SITUACAO { get; set; }
+        public List<string> SITUACOES { get; set; }
         
         [DataMember]
-        public string BAIRRO { get; set; }
-        
-        [DataMember]
-        public string REFERENCIA { get; set; }
-        
-        [DataMember]
-        public string RUA_CRUZAMENTO { get; set; }
+        public List<string> BAIRROS { get; set; }
+
+
+        public AvailableFilters()
+        {
+            CLIENTES = new List<string>();
+            SITUACOES = new List<string>();
+            BAIRROS = new List<string>();
+        }
 
     }
 }
