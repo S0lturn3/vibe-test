@@ -106,6 +106,24 @@ namespace Direcionadores.Controllers
             }
         }
 
+
+        // TODO: Pretendo adicionar o upload do arquivo para facilitar nos testes, sem a necessidade de ter o mesmo na máquina
+        //[Route("upload")]
+        //[HttpPost]
+        //public IHttpActionResult Import(HttpPostedFileBase file)
+        //{
+        //    try
+        //    {
+        //        DirecionadoresFile direcionadoresFile = new DirecionadoresFile();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        throw ex;
+        //    }
+
+        //    return Ok();
+        //}
+
         #endregion Endpoints
 
 
