@@ -25,7 +25,7 @@ namespace Direcionadores
                      .Email("erickcarvalho.contato20@gmail.com")
                  );
 
-                // Incluindo o filtro para upload de arquivos
+                // Para adicionar o suporte ao upload de arquivos, use o método de extensão AddFileUpload
                 c.OperationFilter<FileUploadOperationFilter>();
 
                 // Configurando o caminho virtual (se necessário)
