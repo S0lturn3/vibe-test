@@ -20,12 +20,14 @@ namespace Direcionadores.Controllers
         #region Endpoints
 
         /// <summary>
-        /// Exporta um novo arquivo KML com base nos filtros fornecidos.
+        /// [INCOMPLETO] Exporta um novo arquivo KML com base nos filtros fornecidos.
         /// </summary>
-        /// <param name="currentFilter">Filtros para selecionar os dados a serem exportados.</param>
+        /// <param name="currentFilter">Estrutura que informa quais filtros devem ser aplicados nas pesquisas.</param>
         /// <returns>Novo arquivo KML com base nos filtros aplicados</returns>
         [HttpPost]
         [Route("export")]
+        [SwaggerResponse(HttpStatusCode.OK, "Arquivo filtrado e gerado com sucesso.", typeof(System.Web.Mvc.FileContentResult))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Erro ao gerar o arquivo.", typeof(string))]
         public IHttpActionResult Export(
                 [FromBody] CurrentFilter currentFilter
             )
@@ -66,15 +68,16 @@ namespace Direcionadores.Controllers
         /// <summary>
         ///  Listar os dados filtrados.
         /// </summary>
-        /// <param name="cliente"></param>
-        /// <param name="situacao"></param>
-        /// <param name="bairro"></param>
-        /// <param name="referencia"></param>
-        /// <param name="ruaCruzamento"></param>
+        /// <param name="cliente">Filtro customizado referente ao campo CLIENTE. Se não for informado não será validado e não será considerado na pesquisa.</param>
+        /// <param name="situacao">Filtro customizado referente ao campo SITUAÇÃO. Se não for informado não será validado e não será considerado na pesquisa.</param>
+        /// <param name="bairro">Filtro customizado referente ao campo BAIRRO. Se não for informado não será validado e não será considerado na pesquisa.</param>
+        /// <param name="referencia">Filtro customizado referente ao campo REFERÊNCIA. Se não for informado não será validado e não será considerado na pesquisa.</param>
+        /// <param name="ruaCruzamento">Filtro customizado referente ao campo RUA/CRUZAMENTO. Se não for informado não será validado e não será considerado na pesquisa.</param>
         /// <returns>Lista de elementos filtrados no formato JSON.</returns>
         [HttpGet]
         [Route("")]
-        [ResponseType(typeof(AvailableFilters))]
+        [SwaggerResponse(HttpStatusCode.OK, "Placemarks buscados e filtrados com sucesso.", typeof(List<XElement>))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Erro ao buscar os registros desejados.", typeof(string))]
         public IHttpActionResult List(
                 [FromUri] string cliente = "",
                 [FromUri] string situacao = "",
@@ -103,7 +106,7 @@ namespace Direcionadores.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Erro ao buscar os registros desejados: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
@@ -114,7 +117,8 @@ namespace Direcionadores.Controllers
         /// <returns>Estrutura com todos os valores disponíveis para seleção de cada campo de filtragem</returns>
         [HttpGet]
         [Route("filters")]
-        [ResponseType(typeof(AvailableFilters))]
+        [SwaggerResponse(HttpStatusCode.OK, "Filtros encontrados com sucesso.", typeof(AvailableFilters))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Erro ao buscar os filtros disponíveis.", typeof(string))]
         public IHttpActionResult Filters()
         {
             try
@@ -126,7 +130,7 @@ namespace Direcionadores.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Erro ao buscar os filtros disponíveis: {ex.Message}");
+                return BadRequest(ex.Message);
             }
         }
 
@@ -137,9 +141,9 @@ namespace Direcionadores.Controllers
         /// <returns>Mensagem de sucesso ou erro.</returns>
         [HttpPost]
         [Route("upload")]
-        [SwaggerResponse(HttpStatusCode.OK, "Arquivo carregado com sucesso.")]
-        [SwaggerResponse(HttpStatusCode.BadRequest, "Erro ao carregar o arquivo.")]
-        [SwaggerResponse(HttpStatusCode.InternalServerError, "Erro ao processar o arquivo.")]
+        [SwaggerResponse(HttpStatusCode.OK, "Arquivo carregado com sucesso.", typeof(string))]
+        [SwaggerResponse(HttpStatusCode.BadRequest, "Erro ao carregar o arquivo.", typeof(string))]
+        [SwaggerResponse(HttpStatusCode.InternalServerError, "Erro ao processar o arquivo KML.", typeof(string))]
         public IHttpActionResult Upload()
         {
             try
@@ -149,10 +153,13 @@ namespace Direcionadores.Controllers
                 DirecionadoresFile direcionadoresFile = new DirecionadoresFile(file);
                 return Ok("KML carregado com sucesso! As próximas chamadas passarão a utilizar o arquivo de upload.");
             }
+            catch(FileNotFoundException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                // Retorna um erro de servidor interno com a mensagem de erro detalhada
-                return InternalServerError(new Exception("Erro ao processar o arquivo KML.", ex));
+                return InternalServerError(ex);
             }
         }
 
@@ -215,7 +222,7 @@ namespace Direcionadores.Controllers
             // Verifica se foi enviado algum arquivo
             if (httpRequest.Files.Count == 0)
             {
-                throw new Exception("Nenhum arquivo foi enviado.");
+                throw new FileNotFoundException("Nenhum arquivo foi enviado.");
             }
 
             // Obtém o arquivo
